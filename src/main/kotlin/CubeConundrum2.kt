@@ -1,5 +1,4 @@
 import java.io.File
-import kotlin.math.sin
 
 fun main() {
     day2P1()
@@ -7,7 +6,102 @@ fun main() {
 }
 
 fun day2P2() {
+    val lines = getStringsFromFile()
 
+    var initial = 0
+
+    val listEachGame = mutableListOf<List<String>>()
+
+    for (i in lines.indices) {
+        val string = lines[i]
+
+        val pattern = Regex("(Game (\\d+):)(.*?)(?=(Game \\d+:|$))", RegexOption.DOT_MATCHES_ALL)
+        val matches = pattern.findAll(string)
+
+        for (match in matches) {
+            val gameData = match.groups[3]?.value?.trim()
+
+            val individualGameData = gameData?.split(";")?.map { it.trim() }
+            if (individualGameData != null) {
+                listEachGame.add(individualGameData)
+            }
+        }
+    }
+
+    val listToSum = mutableListOf<MutableList<Int>>()
+
+    while (initial < listEachGame.size) {
+        val toProcess = listEachGame[initial]
+
+        var maxRedNumber: Int? = null
+        var maxGreenNumber: Int? = null
+        var maxBlueNumber: Int? = null
+
+        for (element in toProcess) {
+            val stringList = element.split(",")
+            val regex = Regex("\\d+")
+
+            for (s in stringList) {
+                if (s.contains("red")) {
+                    val matchResult = regex.find(s)
+                    val extractedNumber = matchResult?.value
+
+                    if (extractedNumber != null) {
+                        val number = extractedNumber.toInt()
+
+                        if (maxRedNumber == null || number > maxRedNumber) {
+                            maxRedNumber = number
+                        }
+                    }
+                } else if (s.contains("green")) {
+                    val matchResult = regex.find(s)
+                    val extractedNumber = matchResult?.value
+
+                    if (extractedNumber != null) {
+                        val number = extractedNumber.toInt()
+
+                        if (maxGreenNumber == null || number > maxGreenNumber) {
+                            maxGreenNumber = number
+                        }
+                    }
+                } else if (s.contains("blue")) {
+                    val matchResult = regex.find(s)
+                    val extractedNumber = matchResult?.value
+
+                    if (extractedNumber != null) {
+                        val number = extractedNumber.toInt()
+
+                        if (maxBlueNumber == null || number > maxBlueNumber) {
+                            maxBlueNumber = number
+                        }
+                    }
+                }
+            }
+        }
+
+        val maxValuesList = mutableListOf<Int>()
+
+        if (maxRedNumber != null) {
+            maxValuesList.add(maxRedNumber)
+        }
+        if (maxGreenNumber != null) {
+            maxValuesList.add(maxGreenNumber)
+        }
+        if (maxBlueNumber != null) {
+            maxValuesList.add(maxBlueNumber)
+        }
+
+        listToSum.add(maxValuesList)
+
+        initial++
+    }
+
+    val productListForEachList = listToSum.map { valuesList ->
+        valuesList.reduceOrNull { acc, value -> acc * value } ?: 1
+    }
+
+    val finalSum = productListForEachList.sum()
+    println("Day 2 puzzle 2 answer: $finalSum")
 }
 
 fun day2P1() {
@@ -78,7 +172,7 @@ fun day2P1() {
                 }
                 if (validString.contains(inValid)) {
                     gameStatus.add(notCount)
-                }else{
+                } else {
                     gameStatus.add(count)
                 }
                 validString.clear()
@@ -86,14 +180,14 @@ fun day2P1() {
                 green = ""
                 blue = ""
             }
-            if (!gameStatus.contains(notCount)){
+            if (!gameStatus.contains(notCount)) {
                 match.groups[2]?.value?.let { sumList.add(it.toInt()) }
             }
         }
         gameStatus.clear()
     }
     val answer = sumList.sum()
-    println(answer)
+    println("Day 2 puzzle 1 answer: $answer")
 }
 
 private fun getStringsFromFile(): MutableList<String> {
