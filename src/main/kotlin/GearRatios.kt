@@ -9,6 +9,30 @@ fun main() {
 
 fun day3P2() {
     val lines = getStringsFromFile()
+    val gearCounts = mutableMapOf<Pair<Int, Int>, MutableList<Int>>()
+
+    val partRegex = Regex("\\d+")
+    val gearRegex = Regex("\\*")
+
+    for ((i, line) in lines.withIndex()) {
+        for (match in partRegex.findAll(line)) {
+            val range = max(0, match.range.first - 1)..min(match.range.last + 1, line.length - 1)
+            val partValue = match.value.toInt()
+
+            (i - 1..i + 1)
+                .filter { it in lines.indices }
+                .forEach { j ->
+                    val subStr = lines[j].substring(range)
+                    gearRegex.findAll(lines[j].substring(range)).forEach { gear ->
+                        val gearLocation = Pair(j, gear.range.first + range.first)
+                        gearCounts.getOrPut(gearLocation) { mutableListOf() }.add(partValue)
+                    }
+                }
+        }
+    }
+
+    val sum = gearCounts.values.filter { it.size == 2 }.sumBy { it[0] * it[1] }
+    println("Day 3 puzzle 1 answer: $sum")
 }
 
 fun day3P1() {
