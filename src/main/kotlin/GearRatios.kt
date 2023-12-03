@@ -22,7 +22,6 @@ fun day3P2() {
             (i - 1..i + 1)
                 .filter { it in lines.indices }
                 .forEach { j ->
-                    val subStr = lines[j].substring(range)
                     gearRegex.findAll(lines[j].substring(range)).forEach { gear ->
                         val gearLocation = Pair(j, gear.range.first + range.first)
                         gearCounts.getOrPut(gearLocation) { mutableListOf() }.add(partValue)
@@ -32,7 +31,7 @@ fun day3P2() {
     }
 
     val sum = gearCounts.values.filter { it.size == 2 }.sumBy { it[0] * it[1] }
-    println("Day 3 puzzle 1 answer: $sum")
+    println("Day 3 puzzle 2 answer: $sum")
 }
 
 fun day3P1() {
