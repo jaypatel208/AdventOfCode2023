@@ -30,7 +30,7 @@ fun day3P2() {
         }
     }
 
-    val sum = gearCounts.values.filter { it.size == 2 }.sumBy { it[0] * it[1] }
+    val sum = gearCounts.values.filter { it.size == 2 }.sumOf { it[0] * it[1] }
     println("Day 3 puzzle 2 answer: $sum")
 }
 
