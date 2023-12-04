@@ -7,15 +7,25 @@ fun main() {
 }
 
 fun day4P2() {
-    val input = getStringsFromFile()
+    val input = getStringsFromFile().map { str ->
+        val (number, rest) = str.split(":")
+        val (win, having) = rest.split(" | ").map { s -> s.split(" ").mapNotNull { it.trim().toIntOrNull() } }
+        number to win.intersect(having.toSet()).count()
+    }
+
+    val sum = IntArray(input.size) { 1 }.apply {
+        for (i in input.indices) repeat(input[i].second) { this[i + it + 1] += this[i] }
+    }.sum()
+
+    println("Day 4 puzzle 2 answer: $sum")
 }
 
 fun day4P1() {
     val input = getStringsFromFile()
 
     val commonCounts = input.map { string ->
-        val (listBeforePipe, listAfterPipe) = string.split(":")[1].trim()
-            .split(" | ").map { it.split(" ").filter { it.isNotBlank() }.map { it.toInt() } }
+        val (listBeforePipe, listAfterPipe) = string.split(":")[1].trim().split(" | ")
+            .map { it.split(" ").filter { it.isNotBlank() }.map { it.toInt() } }
 
         listBeforePipe.intersect(listAfterPipe.toSet()).count()
     }
